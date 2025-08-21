@@ -25,6 +25,7 @@ import { jwtDecode } from "jwt-decode";
 import useTemplateById from "@/hooks/useTemplateById";
 import toast from "react-hot-toast";
 import { token } from "../../lib/utils";
+import { MyEditor } from "@/components/dashboard/jobs/MyEditor";
 
 const MAX_FIELDS = 10;
 
@@ -407,13 +408,17 @@ Best regards,
                   }
                 />
                 <div>
-                  <ReactQuill
+                  {/* <ReactQuill
                     theme="snow"
                     value={reminder.message}
                     onChange={(value) =>
                       updateReminder(index, "message", value)
                     }
-                  />
+                  /> */}
+                  <MyEditor   value={reminder.message}
+                    onChange={(value) =>
+                      updateReminder(index, "message", value)
+                    }/>
                 </div>
               </div>
             ))}

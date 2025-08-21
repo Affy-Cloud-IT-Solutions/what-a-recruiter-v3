@@ -4,15 +4,15 @@ import { cn } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./card";
 
 function Table({
-  className,
+  className,title,description,
   ...props
 }) {
   return (
     <div data-slot="table-container" className="relative w-full overflow-x-auto zoom-out">
       <Card>
       <CardHeader>
-       <CardTitle>Employee List</CardTitle>
-        <CardDescription>Manage all registered employees</CardDescription>
+       <CardTitle>{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
       </CardHeader>
      <CardContent className="overflow-x-auto">
 

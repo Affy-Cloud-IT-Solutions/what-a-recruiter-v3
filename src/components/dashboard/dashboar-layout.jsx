@@ -102,11 +102,11 @@ const DashboardLayout = () => {
         icon: <BriefcaseBusiness className="icon-size" />,
       },
 
-      {
-        path: "/company/employee",
-        name: "employee",
-        icon: <LucideUserCog className="icon-size" />,
-      },
+      // {
+      //   path: "/company/employee",
+      //   name: "employee",
+      //   icon: <LucideUserCog className="icon-size" />,
+      // },
       {
         path: "/company/settings",
         name: "Settings",
