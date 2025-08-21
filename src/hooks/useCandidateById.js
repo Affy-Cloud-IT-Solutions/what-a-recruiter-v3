@@ -43,9 +43,10 @@ const useApplicantById = (id) => {
     data: candidate,
     error,
     isLoading: loading,
+    mutate
   } = useSWR(`${baseURL}/job-applications/${id}`, fetcher);
 
-  return { candidate, loading, error };
+  return { candidate, loading, error ,mutate};
 };
 
 export default useApplicantById;

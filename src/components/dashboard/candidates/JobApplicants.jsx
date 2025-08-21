@@ -12,7 +12,7 @@ import {
 import { ArrowLeft, Filter, Loader, Trash2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { timeAgo } from "@/lib/formatDate";
 import { jwtDecode } from "jwt-decode";
 import HeadersJob from "./header-jobs";
@@ -330,7 +330,11 @@ const JobApplicants = () => {
                             className="w-4 h-4"
                           />
                         </TableCell>
-                        <TableCell>{applicant.candidateName}</TableCell>
+                        <TableCell>
+                         <Link to={"/"+localStorage.getItem("role").toLowerCase()+"/candidates/"+applicant.id} className="hover:underline">
+                                           {applicant.candidateName}
+                                              </Link>
+                        </TableCell>
                         <TableCell>{applicant.email}</TableCell>
                         <TableCell>{applicant.status}</TableCell>
                         <TableCell>{applicant.location || "-"}</TableCell>

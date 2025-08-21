@@ -96,7 +96,7 @@ const Jobs = () => {
       <div className="px-4 py-1 border-b  bg-white shadow-sm flex flex-wrap justify-between items-center gap-4">
         <div className="flex items-center gap-2 overflow-auto p-2">
           <h2 className="text-xl md:text-xl font-bold whitespace-nowrap">
-         { `Jobs (${currentJobs && currentJobs.length})`}
+         {`Jobs (${currentJobs && currentJobs.length})`}
           </h2>
 
           <Input

@@ -1,5 +1,7 @@
 import ApplicantDrawer from "@/components/dashboard/candidates/ApplicantDrawer";
 import TopBar from "@/components/dashboard/dashboard-header";
+import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import useApplicantById from "@/hooks/useCandidateById";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
@@ -20,6 +22,8 @@ import {
   Eye,
   ArrowRight,
   Loader,
+  Loader2,
+  ChevronDown,
 } from "lucide-react";
 
 import React, { useMemo, useState } from "react";
@@ -28,23 +32,47 @@ import { useParams } from "react-router-dom";
 
 const CandidateDetails = () => {
   const { candidateId } = useParams();
-  const { candidate, loading, error } = useApplicantById(candidateId);
-  const [selectedApplicant, setSelectedApplicant] = useState("")
+  const { candidate, loading, error, mutate } = useApplicantById(candidateId);
+  const [selectedApplicant, setSelectedApplicant] = useState("");
   const [loader, setLoader] = useState(false);
   const [status, setStatus] = useState("");
   const [progressCount, setProgressCount] = useState(0);
+  const [loadings, setLoadings] = useState(true);
+
   const [view, setView] = useState("status");
 
+  const [applicantData, setApplicantData] = useState(null);
+  const fetchSingleJobApplicant = async (applicantId) => {
+    try {
+      const response = await axios.get(
+        // `/job-applications/by-jobId/${id}/page?page=${page}&size=${pageSize}`
+        `/job-applications/${applicantId}`
+      );
 
+      // return
+      if (!response.data.error) {
+        setApplicantData(response?.data.meta);
+        setStatus(response?.data.meta?.status);
+        handleProgress(response?.data.meta?.status);
+      } else if (response?.data.error) {
+        toast.error("warn", `${response?.data.message}`);
+      }
+    } catch (error) {
+      console.error("Error fetching job applicants:", error);
+    } finally {
+      setLoadings(false);
+    }
+  };
   const updateApplicationStatus = async (newStatus, stageName, hiringStep) => {
     setLoader(true);
+    const user = userInfo();
     try {
       const response = await axios.put(
         "job-applications/update-field-mapping",
         {
-          applicationId: selectedApplicant.id,
+          applicationId: candidateId,
           fieldId: newStatus,
-          updatedBy: userInfo.claims.id,
+          updatedBy: user.claims.id,
           currentStage: hiringStep,
         }
       );
@@ -52,7 +80,8 @@ const CandidateDetails = () => {
       if (!response.data.error) {
         setLoader(false);
         toast.success(`Application moved to ${stageName}`);
-        fetchSingleJobApplicant(selectedApplicant.id);
+        // fetchSingleJobApplicant(selectedApplicant.id);
+        mutate()
       } else if (response.data.error) {
         toast.error(response.data.message);
         setLoader(false);
@@ -93,32 +122,30 @@ const CandidateDetails = () => {
     HIRED: "Hired",
   };
 
-
   const onMoveForward = async () => {
     try {
       const payloadStatus =
         status == "PENDING"
           ? "IN_REVIEW"
           : status == "IN_REVIEW"
-            ? "INTERVIEW"
-            : status == "INTERVIEW"
-              ? "OFFERED"
-              : status == "OFFERED"
-                ? "HIRED"
-                : status == ""
-                  ? "PENDING"
-                  : "";
+          ? "INTERVIEW"
+          : status == "INTERVIEW"
+          ? "OFFERED"
+          : status == "OFFERED"
+          ? "HIRED"
+          : status == ""
+          ? "PENDING"
+          : "";
 
       const response = await axios.put("/job-applications/status", {
-        applicationId: applicantData?.id,
+        applicationId: candidateId,
         status: payloadStatus,
         updatedBy: userInfo?.claims?.id,
       });
-
       if (!response.data.error) {
+        mutate();
         handleProgress(response?.data?.status);
         // setStatus(response?.data?.status);
-        fetchJobApplicant();
       } else if (response.data.error) {
         toast.error(response.data.message);
       }
@@ -143,11 +170,11 @@ const CandidateDetails = () => {
       minute: "2-digit",
     });
   };
- const userInfo = () => {
+  const userInfo = () => {
     const token = localStorage.getItem("token");
+    console.log(token);
     return token ? jwtDecode(token) : null;
-  }
-
+  };
 
   const getStageColor = (stage) => {
     switch (stage) {
@@ -176,7 +203,6 @@ const CandidateDetails = () => {
     setProgressCount(statusProgress[status] || 10);
   };
 
-
   const renderHiringStages = () => {
     const allStages = ["NEW", "IN_REVIEW", "INTERVIEW", "OFFER", "HIRED"];
     const currentStageIndex = allStages.indexOf(candidate.currentStage);
@@ -186,10 +212,11 @@ const CandidateDetails = () => {
         {allStages.map((stage, index) => (
           <div key={stage} className="flex items-center">
             <div
-              className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${index <= currentStageIndex
+              className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all duration-300 ${
+                index <= currentStageIndex
                   ? "bg-yellow-500 border-yellow-600 text-white"
                   : "bg-white border-gray-300 text-gray-400"
-                }`}
+              }`}
             >
               {index < currentStageIndex ? (
                 <CheckCircle className="w-5 h-5" />
@@ -199,20 +226,22 @@ const CandidateDetails = () => {
             </div>
             <div className="ml-3">
               <p
-                className={`text-sm  ${index <= currentStageIndex
+                className={`text-sm  ${
+                  index <= currentStageIndex
                     ? "text-yellow-600"
                     : "text-gray-400"
-                  }`}
+                }`}
               >
                 {stage?.replace("_", " ")}
               </p>
             </div>
             {index < allStages.length - 1 && (
               <ArrowRight
-                className={`mx-4 w-4 h-4 ${index < currentStageIndex
+                className={`mx-4 w-4 h-4 ${
+                  index < currentStageIndex
                     ? "text-yellow-600"
                     : "text-gray-300"
-                  }`}
+                }`}
               />
             )}
           </div>
@@ -221,6 +250,50 @@ const CandidateDetails = () => {
     );
   };
   console.log(candidate, "candidate");
+ 
+    const handleMoveForward = () => {
+      const currentFieldId = candidate?.currentStatusField?.fieldId;
+      const currentStageKey =
+        candidate?.currentStatusField?.fieldName ||
+        candidate?.currentStage;
+      const steps = [];
+  
+      steps.push({ key: "NEW", fieldId: null, fieldName: "NEW" });
+  
+      ["IN_REVIEW", "INTERVIEW", "OFFER"].forEach((key) => {
+        const fields =
+          candidate?.job?.hiringProcess?.stageFields?.[key] || [];
+        fields.forEach((field) => {
+          steps.push({
+            key,
+            fieldId: field.fieldId,
+            fieldName: field.fieldName,
+          });
+        });
+      });
+  
+      steps.push({ key: "HIRED", fieldId: null, fieldName: "HIRED" });
+  
+      const currentIndex = steps.findIndex((step) => {
+        if (["NEW", "HIRED"].includes(step.key)) {
+          return step.key === currentStageKey;
+        }
+        return step.fieldId === currentFieldId;
+      });
+  
+      const nextStep = steps[currentIndex + 1];
+  
+      if (nextStep) {
+        updateApplicationStatus(
+          nextStep.fieldId,
+          nextStep.fieldName,
+          nextStep.key
+        );
+      }
+    };
+  
+
+  
 
   return (
     <>
@@ -253,9 +326,12 @@ const CandidateDetails = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <button onClick={() => {
-                      setSelectedApplicant(candidate);
-                    }} className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all">
+                    <button
+                      onClick={() => {
+                        setSelectedApplicant(candidate);
+                      }}
+                      className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all"
+                    >
                       <Edit3 className="w-5 h-5" />
                     </button>
                     <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-all">
@@ -329,9 +405,109 @@ const CandidateDetails = () => {
 
               {/* Hiring Process Card */}
               <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-                <h3 className="text-xl font-bold text-neutral-700 text-sm mb-6">
+              <div className="flex items-center justify-between mb-6">
+
+                <h3 className="text-xl font-bold text-neutral-700 ">
                   Hiring Process
                 </h3>
+                <div className="flex gap-2 items-center justify-between">
+
+                 <Button
+                    className="bg-[#4C6B8A] text-white shadow-lg"
+                    disabled={candidate?.currentStage === "HIRED" || loader}
+                    onClick={()=>{
+                      console.log("move forward")
+                      handleMoveForward()}}
+                  >
+                    Move Forward
+                  </Button>
+                       <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <Button
+                                            className="bg-[#4C6B8A] text-white px-3"
+                                            disabled={loader}
+                                          >
+                                            {loader ? (
+                                              <Loader2 className="h-4 w-4 animate-spin" />
+                                            ) : (
+                                              <ChevronDown className="h-4 w-4" />
+                                            )}
+                                          </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent className="w-64">
+                                          {Object.entries(stageLabels).map(([key, label]) => {
+                                            const selectedFieldId =
+                                              candidate?.currentStatusField?.fieldId;
+                                            const isCurrentStage =
+                                              candidate?.currentStage === key;
+                  
+                                            return (
+                                              <div key={key}>
+                                                {["NEW", "HIRED"].includes(key) ? (
+                                                  <DropdownMenuItem
+                                                    onClick={() =>
+                                                      updateApplicationStatus(null, key, key)
+                                                    }
+                                                    className={`px-3 py-1 font-semibold text-sm text-black ${
+                                                      isCurrentStage
+                                                        ? "bg-gray-200 text-green-700"
+                                                        : ""
+                                                    }`}
+                                                  >
+                                                    {label}
+                                                    {isCurrentStage && (
+                                                      <span className="ml-auto text-green-700">
+                                                        ✓
+                                                      </span>
+                                                    )}
+                                                  </DropdownMenuItem>
+                                                ) : (
+                                                  <>
+                                                    <div className="px-3 py-1 font-semibold text-sm text-black">
+                                                      {label}
+                                                    </div>
+                                                    {candidate?.job?.hiringProcess?.stageFields?.[
+                                                      key
+                                                    ]?.map((item) => {
+                                                      const isSelected =
+                                                        selectedFieldId === item.fieldId;
+                                                      return (
+                                                        <DropdownMenuItem
+                                                          key={item.fieldId}
+                                                          onClick={() => {
+                                                            if (!isSelected) {
+                                                              updateApplicationStatus(
+                                                                item.fieldId,
+                                                                item.fieldName,
+                                                                key
+                                                              );
+                                                            }
+                                                          }}
+                                                          className={`pl-6 text-sm text-gray-700 ${
+                                                            isSelected
+                                                              ? "bg-gray-200 text-green-700 font-semibold"
+                                                              : ""
+                                                          }`}
+                                                        >
+                                                          {item.fieldName}
+                                                          {isSelected && (
+                                                            <span className="ml-auto text-green-700">
+                                                              ✓
+                                                            </span>
+                                                          )}
+                                                        </DropdownMenuItem>
+                                                      );
+                                                    })}
+                                                  </>
+                                                )}
+                                              </div>
+                                            );
+                                          })}
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                </div>
+                  
+              </div>
                 {renderHiringStages()}
 
                 <div className="mt-8">
@@ -374,14 +550,15 @@ const CandidateDetails = () => {
                                 {round.fieldName}
                               </span>
                               <span
-                                className={`px-2 py-1 rounded text-xs  ${round?.fieldName ===
-                                    candidate.currentStatusField?.fieldName
+                                className={`px-2 py-1 rounded text-xs  ${
+                                  round?.fieldName ===
+                                  candidate.currentStatusField?.fieldName
                                     ? "bg-blue-100 text-blue-900"
                                     : "bg-gray-200 text-gray-600"
-                                  }`}
+                                }`}
                               >
                                 {round?.fieldName ===
-                                  candidate.currentStatusField?.fieldName
+                                candidate.currentStatusField?.fieldName
                                   ? "Current"
                                   : "Pending"}
                               </span>
@@ -402,6 +579,7 @@ const CandidateDetails = () => {
                 <h3 className="font-bold text-neutral-700 text-sm mb-4">
                   Job Details
                 </h3>
+                
 
                 <div className="space-y-4">
                   <div>
@@ -448,10 +626,12 @@ const CandidateDetails = () => {
 
               {/* Activity Card */}
               <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-                <h3 className=" font-bold text-neutral-700 text-sm mb-4">
-                  Recent Activity
-                </h3>
-
+                <div className="flex justify-between items-center">
+                  <h3 className=" font-bold text-neutral-700 text-sm mb-4">
+                    Recent Activity
+                  </h3>
+                 
+                </div>
                 <div className="space-y-4">
                   <div className="flex items-start space-x-3">
                     <div className="w-2 h-2 bg-blue-900 rounded-full mt-2"></div>
