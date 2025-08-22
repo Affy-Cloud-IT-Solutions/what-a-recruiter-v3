@@ -263,7 +263,7 @@ const ApplicantList = () => {
                   <SelectValue placeholder="Filter by Status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="all">All</SelectItem>
                   <SelectItem value="NEW">New</SelectItem>
                   <SelectItem value="IN_REVIEW">In Review</SelectItem>
                   <SelectItem value="INTERVIEW">Interview</SelectItem>

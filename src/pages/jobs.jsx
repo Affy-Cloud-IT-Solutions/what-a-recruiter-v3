@@ -118,11 +118,11 @@ const Jobs = () => {
           >
             <SelectTrigger className="w-36">
               <SelectValue>
-                {statusFilter === "ALL" ? "All Statuses" : statusFilter}
+                {statusFilter === "ALL" ? "All" : statusFilter}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All Statuses</SelectItem>
+              <SelectItem value="ALL">All</SelectItem>
               <SelectItem value="PENDING">Pending</SelectItem>
               <SelectItem value="IN_REVIEW">In Review</SelectItem>
               <SelectItem value="INTERVIEW">Interview</SelectItem>
