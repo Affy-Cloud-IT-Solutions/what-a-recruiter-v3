@@ -21,7 +21,13 @@ import ApplicantDrawer from "./ApplicantDrawer";
 import toast from "react-hot-toast";
 import TopBar from "../dashboard-header";
 import useSWR from "swr";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const ApplicantList = () => {
   const role = localStorage.getItem("role");
@@ -118,14 +124,14 @@ const ApplicantList = () => {
         status == "PENDING"
           ? "IN_REVIEW"
           : status == "IN_REVIEW"
-            ? "INTERVIEW"
-            : status == "INTERVIEW"
-              ? "OFFERED"
-              : status == "OFFERED"
-                ? "HIRED"
-                : status == ""
-                  ? "PENDING"
-                  : "";
+          ? "INTERVIEW"
+          : status == "INTERVIEW"
+          ? "OFFERED"
+          : status == "OFFERED"
+          ? "HIRED"
+          : status == ""
+          ? "PENDING"
+          : "";
 
       const response = await axios.put("/job-applications/status", {
         applicationId: applicantData?.id,
@@ -247,18 +253,22 @@ const ApplicantList = () => {
 
   return (
     <>
-      <TopBar title={"Candidate"} />
+      <TopBar />
       <div className="relative min-h-screen w-full p-4 md:p-4 zoom-out">
         <div
-          className={`transition-all duration-300  ${selectedApplicant ? "w-full" : "w-full"
-            }`}
+          className={`transition-all duration-300  ${
+            selectedApplicant ? "w-full" : "w-full"
+          }`}
         >
           <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl md:text-2xl font-bold">
-              {jobApplicant && jobApplicant.length} Applicants
+            <h2 className="text-xl font-bold">
+              Applicants ({jobApplicant && jobApplicant.length})
             </h2>
             <div className="flex flex-wrap gap-4 items-center">
-              <Select onValueChange={(value) => setStatusFilter(value)} defaultValue="all">
+              <Select
+                onValueChange={(value) => setStatusFilter(value)}
+                defaultValue="all"
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Filter by Status" />
                 </SelectTrigger>
@@ -272,7 +282,10 @@ const ApplicantList = () => {
                 </SelectContent>
               </Select>
 
-              <Select onValueChange={(value) => setSortOrder(value)} defaultValue="latest">
+              <Select
+                onValueChange={(value) => setSortOrder(value)}
+                defaultValue="latest"
+              >
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Sort by Date" />
                 </SelectTrigger>
@@ -281,9 +294,7 @@ const ApplicantList = () => {
                   <SelectItem value="oldest">Oldest to Latest</SelectItem>
                 </SelectContent>
               </Select>
-
             </div>
-
           </div>
           <div className="overflow-x-auto">
             <Table className="w-full border rounded-lg">
@@ -299,19 +310,23 @@ const ApplicantList = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {jobApplicant && jobApplicant
-                  .filter((applicant) =>
-                    statusFilter === "all"
-                      ? true
-                      : applicant.currentStage === statusFilter
-                  )
-                  .sort((a, b) => {
-                    const dateA = new Date(a.appliedAt).getTime();
-                    const dateB = new Date(b.appliedAt).getTime();
-                    return sortOrder === "latest" ? dateB - dateA : dateA - dateB;
-                  })
-                  .map((applicant) => <TableRow key={applicant.id} className="border-b">
-                    {/* <TableCell>
+                {jobApplicant &&
+                  jobApplicant
+                    .filter((applicant) =>
+                      statusFilter === "all"
+                        ? true
+                        : applicant.currentStage === statusFilter
+                    )
+                    .sort((a, b) => {
+                      const dateA = new Date(a.appliedAt).getTime();
+                      const dateB = new Date(b.appliedAt).getTime();
+                      return sortOrder === "latest"
+                        ? dateB - dateA
+                        : dateA - dateB;
+                    })
+                    .map((applicant) => (
+                      <TableRow key={applicant.id} className="border-b">
+                        {/* <TableCell>
                       <Input
                         type="checkbox"
                         onChange={() => {
@@ -322,55 +337,59 @@ const ApplicantList = () => {
                         className="w-4 h-4"
                       />
                     </TableCell> */}
-                    <TableCell>
-                      {" "}
-                      <Link to={applicant.id} className="hover:underline">
-                        {applicant.candidateName}
-                      </Link>
-                    </TableCell>
-                    <TableCell>{applicant.email}</TableCell>
-                    <TableCell>{applicant.location || "-"}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-3 py-[2px] rounded-full border capitalize text-xs 
-                        ${applicant.currentStage === "HIRED"
+                        <TableCell>
+                          {" "}
+                          <Link to={applicant.id} className="hover:underline">
+                            {applicant.candidateName}
+                          </Link>
+                        </TableCell>
+                        <TableCell>{applicant.email}</TableCell>
+                        <TableCell>{applicant.location || "-"}</TableCell>
+                        <TableCell>
+                          <span
+                            className={`px-3 py-[2px] rounded-full border capitalize text-xs 
+                        ${
+                          applicant.currentStage === "HIRED"
                             ? "bg-green-100 text-green-800"
                             : applicant.currentStage === "INTERVIEW"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : applicant.currentStage === "NEW"
-                                ? "bg-blue-100 text-blue-800"
-                                : applicant.currentStage === "OFFERED"
-                                  ? "bg-purple-100 text-purple-800"
-                                  : applicant.currentStage === "IN_REVIEW"
-                                    ? "bg-orange-100 text-orange-800"
-                                    : "bg-gray-100 text-gray-800"
-                          }
-    `}
-                      >
-                        {applicant.currentStage
-                          ? applicant.currentStage.charAt(0).toUpperCase() + applicant.currentStage.slice(1).toLowerCase()
-                          : "-"
+                            ? "bg-yellow-100 text-yellow-800"
+                            : applicant.currentStage === "NEW"
+                            ? "bg-blue-100 text-blue-800"
+                            : applicant.currentStage === "OFFERED"
+                            ? "bg-purple-100 text-purple-800"
+                            : applicant.currentStage === "IN_REVIEW"
+                            ? "bg-orange-100 text-orange-800"
+                            : "bg-gray-100 text-gray-800"
                         }
-                      </span>
-                    </TableCell>
-                    <TableCell>{timeAgo(applicant.appliedAt)}</TableCell>
-                    <TableCell><Button asChild size={"icon"} className={"bg-blue-400 text-white"}>
-                     
-
-                       <Link to={applicant.id} className="hover:underline">
-                         <Eye />
-                      </Link>
-                    </Button></TableCell>
-                  </TableRow>
-                  )}
+    `}
+                          >
+                            {applicant.currentStage
+                              ? applicant.currentStage.charAt(0).toUpperCase() +
+                                applicant.currentStage.slice(1).toLowerCase()
+                              : "-"}
+                          </span>
+                        </TableCell>
+                        <TableCell>{timeAgo(applicant.appliedAt)}</TableCell>
+                        <TableCell>
+                          <Button
+                            asChild
+                            size={"icon"}
+                            className={"bg-blue-400 text-white"}
+                          >
+                            <Link to={applicant.id} className="hover:underline">
+                              <Eye />
+                            </Link>
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
               </TableBody>
             </Table>
-
           </div>
-           <div className="flex justify-center   mx-auto items-center mt-4 text-sm  w-full gap-2">
-            <div>
+          {/* <div className="text-center mt-2">
               Page {currentPage} of {totalPages}
-            </div>
+            </div> */}
+          <div className="flex justify-center   mx-auto items-center mt-4 text-sm  w-full gap-2">
             <div className="flex gap-2 flex-wrap">
               <Button
                 variant="outline"
@@ -403,7 +422,6 @@ const ApplicantList = () => {
             </div>
           </div>
         </div>
-
 
         {selectedApplicant && (
           <ApplicantDrawer

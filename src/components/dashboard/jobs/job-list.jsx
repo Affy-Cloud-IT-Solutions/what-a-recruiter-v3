@@ -15,7 +15,9 @@ const JobListTable = ({ jobs }) => {
   const [page, setPage] = useState(2);
   return (
     <div className="px-4  ">
-      <Table className="w-full border rounded-lg" title={`Jobs (${jobs.length})`} description={"All jobs list"}>
+      <Table className="w-full border rounded-lg" 
+      // title={`Jobs (${jobs.length})`} description={"All jobs list"}
+      >
         <TableHeader className="bg-gray-100 text-gray-700 font-semibold">
           <TableRow>
             <TableHead className="px-6 py-3">#Job Code</TableHead>

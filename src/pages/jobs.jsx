@@ -77,10 +77,14 @@ const Jobs = () => {
       case "title-desc":
         return b.jobTitle.localeCompare(a.jobTitle);
       case "date-asc":
-        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
       case "date-desc":
       default:
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        return (
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
     }
   });
 
@@ -95,19 +99,9 @@ const Jobs = () => {
       <TopBar />
       <div className="px-4 py-1 border-b  bg-white shadow-sm flex flex-wrap justify-between items-center gap-4">
         <div className="flex items-center gap-2 overflow-auto p-2">
-          <h2 className="text-xl md:text-xl font-bold whitespace-nowrap">
-         {`Jobs (${currentJobs && currentJobs.length})`}
+          <h2 className="text-xl font-bold whitespace-nowrap">
+            {`Jobs (${currentJobs && currentJobs.length})`}
           </h2>
-
-          <Input
-            placeholder="Search by title, location or recruiter..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="min-w-[200px]"
-          />
 
           <Select
             onValueChange={(val) => {
@@ -149,6 +143,15 @@ const Jobs = () => {
               <SelectItem value="date-asc">Date: Old to New</SelectItem>
             </SelectContent>
           </Select>
+          <Input
+            placeholder="Search by title, location or recruiter..."
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="min-w-[200px]"
+          />
         </div>
 
         <div className="flex gap-2">
@@ -159,17 +162,21 @@ const Jobs = () => {
             "RECRUITMENT_MANAGER",
             "RECRUITER",
           ].includes(role || "") && (
-              <Button asChild>
-                <Link to="create-jobs" className="flex items-center gap-2">
-                  <Plus /> Create Job
-                </Link>
-              </Button>
-            )}
+            <Button asChild>
+              <Link to="create-jobs" className="flex items-center gap-2">
+                <Plus /> Create Job
+              </Link>
+            </Button>
+          )}
 
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button size="icon" variant="ghost" onClick={handleSetIsGridView}>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={handleSetIsGridView}
+                >
                   {isGrid ? (
                     <Grid className="h-5 w-5" />
                   ) : (
@@ -187,7 +194,11 @@ const Jobs = () => {
 
       {currentJobs && (
         <div className="mt-6">
-          {!isGrid ? <JobList jobs={currentJobs} /> : <JobListTable jobs={currentJobs} />}
+          {!isGrid ? (
+            <JobList jobs={currentJobs} />
+          ) : (
+            <JobListTable jobs={currentJobs} />
+          )}
         </div>
       )}
 
