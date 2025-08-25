@@ -124,12 +124,11 @@ const DashboardLayout = () => {
         name: "Candidates",
         icon: <FileUser className="icon-size" />,
       },
-      {
-        path: "/admin/sub-admin",
-        name: "Sub-admin",
-        icon: <UserIcon className="icon-size" />,
-      },
-     
+      // {
+      //   path: "/admin/sub-admin",
+      //   name: "Sub-admin",
+      //   icon: <UserIcon className="icon-size" />,
+      // },    
 
       {
         path: "/admin/jobs",

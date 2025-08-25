@@ -210,11 +210,11 @@ const App = () => {
                         element={<CreateManager />}
                       />
                       <Route path="/managers" element={<Managers />} />
-                      <Route path="/sub-admin" element={<Employee />} />
-                      <Route
+                      {/* <Route path="/sub-admin" element={<Employee />} /> */}
+                      {/* <Route
                         path="/sub-admin/create"
                         element={<CreateEmployee />}
-                      />
+                      /> */}
                       <Route
                         path="/jobs/job-profile/:id"
                         element={<JobApplicants />}
@@ -361,11 +361,10 @@ const App = () => {
                         path="/managers/create"
                         element={<CreateManager />}
                       />
-                      <Route path="/sub-admin" element={<Employee />} />
-                      <Route
+                      {/* <Route
                         path="/sub-admin/create"
                         element={<CreateEmployee />}
-                      />
+                      /> */}
                       <Route
                         path="/jobs/job-profile/:id"
                         element={<JobApplicants />}

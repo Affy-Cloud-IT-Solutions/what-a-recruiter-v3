@@ -10,11 +10,12 @@ export const useGetJobs = () => {
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
   const { id, role } = decodedToken.claims;
+  console.log(decodedToken)
   const endpoint =
     role === "COMPANY"
       ? `job/byParent/${id}`
       : role === "ADMIN" || role === "EMPLOYEE" || role == "RECRUITER"
-      ? `/job/byParent/${profileData.parent.id}`
+      ? `job/byParent/${decodedToken.claims.parent.id}`
       : `/job/jobs/by-recruiter-or-creator/${id}`;
   const fetcher = async (url) => {
     try {
