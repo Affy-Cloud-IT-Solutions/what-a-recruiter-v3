@@ -16,7 +16,7 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { format, addDays, subDays, isSameDay, parse } from "date-fns";
-import MonthlyBarChart from "../reusable/barCharts";
+// import MonthlyBarChart from "../reusable/barCharts";
 import RecruiterDoughnutChart from "../reusable/barCharts";
 
 const data = [
@@ -25,6 +25,8 @@ const data = [
   { name: "Offered", value: 23, color: "#3457D5" },
   { name: "Hired", value: 41, color: "#1E3AA6" },
 ];
+
+
 const interviews = [
   { role: "UI/UX designer", date: "13 May 2025" },
   { role: "Frontend Developer", date: "15 May 2025" },
@@ -33,6 +35,7 @@ const interviews = [
   { role: "Customer Manager", date: "07 May 2025" },
   { role: "UI/UX designer", date: "12 May 2025" },
 ];
+
 
 const parseInterviewDate = (str) => parse(str, "dd MMMM yyyy", new Date());
 const Dashboard = () => {

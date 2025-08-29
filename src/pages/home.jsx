@@ -100,16 +100,15 @@ const Home = () => {
             to={linksToDisplay.path}
             className={[
               buttonVariants,
-              "w-60 transform rounded-lg bg-black px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200",
+              "w-60 transform rounded-lg bg-blue-950 px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200",
             ]}
           >
             {linksToDisplay.name || "Get Started"}
           </NavLink>{" "}
-          <button className="w-60 transform rounded-lg border border-gray-300 bg-white px-6 py-2 font-medium text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-gray-100 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
+          <button className="w-60 transform rounded-lg border border-gray-300 bg-yellow-500 px-6 py-2 font-medium text-white transition-all duration-300 hover:-translate-y-0.5 hover:bg-yellow-400 dark:border-gray-700 dark:bg-black dark:text-white dark:hover:bg-gray-900">
             Contact Support
           </button>
         </motion.div>
-
         <div className="min-h-screen py-6 sm:py-14 mx-auto ">
           <div className="pointer-events-none absolute inset-0 top-0 z-0 overflow-hidden">
             <div className="absolute -top-20 -left-20 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-blue-500/30 via-blue-500/20 to-transparent opacity-50 blur-[100px]" />
@@ -297,7 +296,6 @@ const Home = () => {
           </main>
         </div>
       </div>
-
       <Faq1 />
     </div>
   );

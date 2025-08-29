@@ -1,16 +1,16 @@
 import { jwtDecode } from "jwt-decode";
-import { useProfileData } from "./use-fetch-profile";
+// import { useProfileData } from "./use-fetch-profile";
 import useSWR from "swr";
 import { baseURL } from "@/App";
 import axios from "axios";
 
 export const useGetJobs = () => {
-  const { profileData } = useProfileData();
+  // const { profileData } = useProfileData();
 
   const token = localStorage.getItem("token");
   const decodedToken = jwtDecode(token);
   const { id, role } = decodedToken.claims;
-  console.log(decodedToken)
+  console.log(decodedToken);
   const endpoint =
     role === "COMPANY"
       ? `job/byParent/${id}`
